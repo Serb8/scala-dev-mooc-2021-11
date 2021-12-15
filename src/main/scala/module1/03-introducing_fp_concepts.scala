@@ -221,15 +221,26 @@ object hof{
           case Option.Some(v) => println(v)
           case Option.None =>
         }
+
+      def zip[B](opt: Option[B]): Option[(T, B)] = this match {
+        case Option.Some(v) => opt match {
+          case Option.Some(x) => Option.Some((v, x))
+          case Option.None => Option.None
+        }
+        case Option.None => Option.None
+      }
+
+      def filter(f: T => Boolean): Option[T] = this match {
+        case Option.Some(v) => if (f(v)) Option.Some(v) else Option.None
+        case Option.None => Option.None
+      }
    }
 
    object Option{
         case class Some[T](v: T) extends Option[T]
         case object None extends Option[Nothing]
 
-        def apply[T](v: T): Option[T] = ???
-
-
+        def apply[T](v: T): Option[T] = if (v == null) None else Some(v)
    }
 
 
@@ -267,14 +278,51 @@ object hof{
 
     sealed trait List[+T]{
 
-      def ::[A >: T](elem: A): List[A] = new :: (elem, this)
+     def ::[A >: T](elem: A): List[A] = List.:: (elem, this)
+
+     def mkString(delimiter: String): String = this match {
+       case List.::(head, tail) =>
+         if (!tail.eq(List.Nil))
+           head + delimiter + tail.mkString(delimiter)
+         else head.toString
+       case List.Nil => ""
+     }
+
+     def reverse(): List[T] = this match {
+       case List.::(head, tail) => {
+         var result = List.Nil.::(head)
+         var rest = tail
+         while (!rest.eq(List.Nil)) {
+           val restHeadTail = rest.asInstanceOf[List.::[T]]
+           result = result.::(restHeadTail.head)
+           rest = restHeadTail.tail
+         }
+         result
+       }
+       case List.Nil => List.Nil
+     }
+
+     def map[A](f: T => A): List[A] = this match {
+       case List.::(head, tail) => List.::(f(head), tail.map(f))
+       case List.Nil => List.Nil
+     }
+
+     def filter(f: T => Boolean): List[Any] = this match {
+       case List.::(head, tail) => if(f(head)) List.::(head, tail.filter(f)) else tail.filter(f)
+       case List.Nil => List.Nil
+     }
+
     }
 
-    case class ::[A](head: A, tail: List[A]) extends List[A]
-    case object Nil extends List[Nothing]
-
     object List {
-      def apply[T](v: T*): List[T] = if (v.isEmpty) Nil else new ::(v.head, apply(v.tail: _*))
+      case class ::[A](head: A, tail: List[A]) extends List[A]
+      case object Nil extends List[Nothing]
+
+      def apply[T](v: T*): List[T] = if (v.isEmpty) Nil else ::(v.head, apply(v.tail: _*))
+
+      def incList(list: List[Int]): List[Int] = list.map(el => el + 1)
+
+      def shoutString(list: List[String]): List[String] = list.map(el => el + "!")
     }
     
 
