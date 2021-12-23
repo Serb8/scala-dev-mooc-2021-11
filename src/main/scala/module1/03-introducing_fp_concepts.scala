@@ -222,17 +222,24 @@ object hof{
           case Option.None =>
         }
 
-      def zip[B](opt: Option[B]): Option[(T, B)] = this match {
-        case Option.Some(v) => opt match {
-          case Option.Some(x) => Option.Some((v, x))
-          case Option.None => Option.None
-        }
-        case Option.None => Option.None
-      }
+//      def zip[B](opt: Option[B]): Option[(T, B)] = this match {
+//        case Option.Some(v) => opt match {
+//          case Option.Some(x) => Option.Some((v, x))
+//          case Option.None => Option.None
+//        }
+//        case Option.None => Option.None
+//      }
+
+      def zip[B](opt: Option[B]): Option[(T, B)] = this.flatMap(v1 => opt.map(v2 => (v1, v2)))
+
+//      def filter(f: T => Boolean): Option[T] = this match {
+//        case Option.Some(v) => if (f(v)) Option.Some(v) else Option.None
+//        case Option.None => Option.None
+//      }
 
       def filter(f: T => Boolean): Option[T] = this match {
-        case Option.Some(v) => if (f(v)) Option.Some(v) else Option.None
-        case Option.None => Option.None
+        case Option.Some(v) if f(v) => Option.Some(v)
+        case _ => Option.None
       }
    }
 
@@ -280,26 +287,40 @@ object hof{
 
      def ::[A >: T](elem: A): List[A] = List.:: (elem, this)
 
+//     def mkString(delimiter: String): String = this match {
+//       case List.::(head, tail) =>
+//         if (!tail.eq(List.Nil))
+//           head + delimiter + tail.mkString(delimiter)
+//         else head.toString
+//       case List.Nil => ""
+//     }
+
      def mkString(delimiter: String): String = this match {
-       case List.::(head, tail) =>
-         if (!tail.eq(List.Nil))
-           head + delimiter + tail.mkString(delimiter)
-         else head.toString
+       case List.::(head, tail) => head + delimiter + tail.mkString(delimiter)
+       case List.::(head, List.Nil) => head.toString
        case List.Nil => ""
      }
 
-     def reverse(): List[T] = this match {
-       case List.::(head, tail) => {
-         var result = List.Nil.::(head)
-         var rest = tail
-         while (!rest.eq(List.Nil)) {
-           val restHeadTail = rest.asInstanceOf[List.::[T]]
-           result = result.::(restHeadTail.head)
-           rest = restHeadTail.tail
-         }
-         result
+//     def reverse(): List[T] = this match {
+//       case List.::(head, tail) => {
+//         var result = List.Nil.::(head)
+//         var rest = tail
+//         while (!rest.eq(List.Nil)) {
+//           val restHeadTail = rest.asInstanceOf[List.::[T]]
+//           result = result.::(restHeadTail.head)
+//           rest = restHeadTail.tail
+//         }
+//         result
+//       }
+//       case List.Nil => List.Nil
+//     }
+
+     def reverse: List[T] = {
+       def loop(list: List[T] = this, acc: List[T] = List.Nil): List[T] = list match {
+         case List.::(head, tail) => loop(tail, head :: acc )
+         case List.Nil => acc
        }
-       case List.Nil => List.Nil
+       loop()
      }
 
      def map[A](f: T => A): List[A] = this match {
