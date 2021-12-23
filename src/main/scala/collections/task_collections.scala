@@ -18,7 +18,7 @@ object task_collections {
 
   def capitalizeIgnoringASCII(text: List[String]): List[String] = {
     val tailTransformed = text.tail.map {
-      case e => if (isASCIIString(e)) e.toUpperCase else e.toLowerCase
+      el => if (isASCIIString(el)) el.toUpperCase else el.toLowerCase
     }
     text.head::tailTransformed
   }
@@ -33,10 +33,32 @@ object task_collections {
    * HINT: Для всех возможных комбинаций чисел стоит использовать Map
    * **/
   def numbersToNumericString(text: String): String = {
-    val intStringNumerics: Map[Int, String] =
-      Map(0 -> "zero", 1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four", 5 -> "five", 6 -> "six", 7 -> "seven", 8 -> "eight", 9 -> "nine")
+    val intStringNumerics: Map[String, String] = Map(
+      "0" -> "zero",
+      "1" -> "one",
+      "2" -> "two",
+      "3" -> "three",
+      "4" -> "four",
+      "5" -> "five",
+      "6" -> "six",
+      "7" -> "seven",
+      "8" -> "eight",
+      "9" -> "nine"
+    )
 
-    ""
+    val textArray = text.split(' ')
+
+    val textWithOnlyLetters = textArray.map(el =>
+      if(el.matches("\\d")) {
+        intStringNumerics
+          .withFilter{case (int, _) => el == int}
+          .map({ case (_, string) => string })
+          .head
+      }
+      else el
+    ).mkString(" ")
+
+    textWithOnlyLetters
   }
 
   /**
@@ -54,7 +76,7 @@ object task_collections {
    * Реализуйте метод который примет две коллекции (два источника) и вернёт объединенный список уникальный значений
    **/
   def intersectionAuto(dealerOne: Iterable[Auto], dealerTwo: Iterable[Auto]): Iterable[Auto] = {
-    Iterable.empty
+    dealerOne.toSet ++ dealerTwo
   }
 
   /**
