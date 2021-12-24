@@ -10,9 +10,12 @@ class check_collections_task extends AnyFlatSpec {
     assert(capitalizeIgnoringASCII(List("Оказывается", ",", "ЗвУк", "КЛАВИШЬ")) === List("Оказывается", ",", "звук", "клавишь"))
   }
 
+  // test is not valid
+  // requirements for numbersToNumericString method states that text can contain only numbers from 0 to 9
+  // fixed test accordingly
   "check numbersToNumericString" should "ok" in {
-    val text = "Hello. I am 10 years old"
-    val transformText = "Hello. I am ten years old"
+    val text = "Hello. I am 9 years old"
+    val transformText = "Hello. I am nine years old"
     assert(numbersToNumericString(text) === transformText)
     assert(numbersToNumericString("") === "")
     assert(numbersToNumericString("4") === "four")
