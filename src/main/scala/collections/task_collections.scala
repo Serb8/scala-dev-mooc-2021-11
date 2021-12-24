@@ -48,7 +48,7 @@ object task_collections {
 
     val textArray = text.split(' ')
 
-    val textWithOnlyLetters = textArray.map(el =>
+    val textArrayWithOnlyLetters = textArray.map(el =>
       if(el.matches("\\d")) {
         intStringNumerics
           .withFilter{case (int, _) => el == int}
@@ -56,9 +56,10 @@ object task_collections {
           .head
       }
       else el
-    ).mkString(" ")
+    )
 
-    textWithOnlyLetters
+    val resultText = textArrayWithOnlyLetters.mkString(" ")
+    resultText
   }
 
   /**
