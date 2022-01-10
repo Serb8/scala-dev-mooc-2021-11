@@ -17,10 +17,16 @@ object task_collections {
    * **/
 
   def capitalizeIgnoringASCII(text: List[String]): List[String] = {
-    val tailTransformed = text.tail.map {
-      el => if (isASCIIString(el)) el.toUpperCase else el.toLowerCase
+//    val tailTransformed = text.tail.map {
+//      el => if (isASCIIString(el)) el.toUpperCase else el.toLowerCase
+//    }
+//    text.head::tailTransformed
+
+    text.zipWithIndex.collect{
+      case (st, 1) => st
+      case (st, idx) if isASCIIString(st) => st.toUpperCase()
+      case (st, idx) if !isASCIIString(st) => st.toLowerCase()
     }
-    text.head::tailTransformed
   }
 
   /**
@@ -46,20 +52,24 @@ object task_collections {
       "9" -> "nine"
     )
 
-    val textArray = text.split(' ')
+//    val textArray = text.split(' ')
+//
+//    val textArrayWithOnlyLetters = textArray.map(el =>
+//      if(el.matches("\\d")) {
+//        intStringNumerics
+//          .withFilter{case (int, _) => el == int}
+//          .map({ case (_, string) => string })
+//          .head
+//      }
+//      else el
+//    )
+//
+//    val resultText = textArrayWithOnlyLetters
+//    resultText
 
-    val textArrayWithOnlyLetters = textArray.map(el =>
-      if(el.matches("\\d")) {
-        intStringNumerics
-          .withFilter{case (int, _) => el == int}
-          .map({ case (_, string) => string })
-          .head
-      }
-      else el
-    )
-
-    val resultText = textArrayWithOnlyLetters.mkString(" ")
-    resultText
+    text
+      .split(' ')
+      .map(word => intStringNumerics.getOrElse(word, word)).mkString(" ")
   }
 
   /**
