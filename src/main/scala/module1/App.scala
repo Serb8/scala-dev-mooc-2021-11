@@ -5,7 +5,8 @@ object App {
 
   def main(args: Array[String]): Unit = {
 
-      module2.implicits.implicit_scopes.result
+      module2.homework_hkt_impllicts.r1
+      module2.homework_hkt_impllicts.r2
   }
 
 }
