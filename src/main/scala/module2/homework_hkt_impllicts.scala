@@ -30,6 +30,8 @@ object homework_hkt_impllicts{
       override def flatMap[B](list: List[Int])(f: Int => List[B]): List[B] = list.flatMap(f)
     }
 
+    def apply[F[_], A](implicit obj: Bindable[F, A]): Bindable[F, A] = obj
+
     //    def from[F[_], A]: Bindable[F[_], A] = new Bindable[F[_], A] {
     //      override def map[B](opt: F[A])(f: Int => B): F[B] = opt.map(f)
     //      override def flatMap[B](opt: F[A])(f: Int => F[B]): F[B] = opt.flatMap(f)
@@ -42,6 +44,11 @@ object homework_hkt_impllicts{
   implicit class BindableOps[F[_], A, B](fa: F[A]) {
     def tupleF(fb: F[B])(implicit m: Bindable[F, A], k: Bindable[F, B]): F[(A, B)] = m.flatMap(fa)(a => k.map(fb)(b => (a, b)))
   }
+
+  // makes no sense. just to try summoner method
+  def tupleF2(fa: Option[Int], fb: Option[Int]): Option[(Int, Int)] =
+    Bindable[Option, Int].flatMap(fa)(a => Bindable[Option, Int].map(fb)(b => (a, b)))
+
 
 
   //  implicit def optToBindable[A](opt: Option[A]): Bindable[Option, A] = new Bindable[Option, A] {
