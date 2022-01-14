@@ -23,7 +23,7 @@ object task_futures_sequence {
    */
   def fullSequence[A](futures: List[Future[A]])
                      (implicit ex: ExecutionContext): Future[(List[A], List[Throwable])] = {
-    futures.foldLeft(Future.successful((List[A](), List[Throwable]()))) {
+    futures.foldLeft(Future((List[A](), List[Throwable]()))) {
       (r, f) => {
         r.flatMap {
           acc => f.transformWith{
