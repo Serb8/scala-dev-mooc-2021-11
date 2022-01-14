@@ -27,8 +27,8 @@ object task_futures_sequence {
       (r, f) => {
         r.flatMap {
           acc => f.transformWith{
-            case Success(value) => Future.successful(acc._1 :+ value, acc._2)
-            case Failure(exception) => Future.successful(acc._1, acc._2 :+ exception)
+            case Success(value) => Future(acc._1 :+ value, acc._2)
+            case Failure(exception) => Future(acc._1, acc._2 :+ exception)
           }
         }
       }
